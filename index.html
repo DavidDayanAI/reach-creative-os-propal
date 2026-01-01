@@ -365,9 +365,14 @@
 
         .module-card-meta {
             display: flex;
-            gap: 24px;
+            flex-wrap: wrap;
+            gap: 8px 24px;
             font-size: 12px;
             color: var(--gray);
+        }
+
+        .module-card-meta span {
+            white-space: nowrap;
         }
 
         .module-card-expand {
@@ -1224,7 +1229,7 @@
         @media (max-width: 1024px) {
             .hero-image { display: none; }
             .hero-content { max-width: 100%; }
-            .modules-grid { grid-template-columns: repeat(2, 1fr); }
+            .modules-grid { grid-template-columns: 1fr; }
             .module-modal-sections { grid-template-columns: 1fr; }
         }
 
@@ -1346,7 +1351,7 @@
                     <div class="module-card-info">
                         <h3 class="module-card-name">Connexion sécurisée & gestion des utilisateurs</h3>
                         <div class="module-card-meta">
-                            <span>45 fonctionnalités</span>
+                            <span>45 fonc.</span>
                             <span>3 280 €</span>
                         </div>
                     </div>
@@ -1360,7 +1365,7 @@
                     <div class="module-card-info">
                         <h3 class="module-card-name">Import automatique des données Google Sheets</h3>
                         <div class="module-card-meta">
-                            <span>52 fonctionnalités</span>
+                            <span>52 fonc.</span>
                             <span>2 800 €</span>
                         </div>
                     </div>
@@ -1374,7 +1379,7 @@
                     <div class="module-card-info">
                         <h3 class="module-card-name">Intégration vidéo Frame.io</h3>
                         <div class="module-card-meta">
-                            <span>28 fonctionnalités</span>
+                            <span>28 fonc.</span>
                             <span>1 600 €</span>
                         </div>
                     </div>
@@ -1388,7 +1393,7 @@
                     <div class="module-card-info">
                         <h3 class="module-card-name">Architecture base de données Supabase</h3>
                         <div class="module-card-meta">
-                            <span>34 fonctionnalités</span>
+                            <span>34 fonc.</span>
                             <span>2 500 €</span>
                         </div>
                     </div>
@@ -1402,7 +1407,7 @@
                     <div class="module-card-info">
                         <h3 class="module-card-name">Dashboard Overview — Vue globale</h3>
                         <div class="module-card-meta">
-                            <span>20 fonctionnalités</span>
+                            <span>20 fonc.</span>
                             <span>1 100 €</span>
                         </div>
                     </div>
@@ -1416,7 +1421,7 @@
                     <div class="module-card-info">
                         <h3 class="module-card-name">Creative Analysis — Analyse des performances</h3>
                         <div class="module-card-meta">
-                            <span>22 fonctionnalités</span>
+                            <span>22 fonc.</span>
                             <span>900 €</span>
                         </div>
                     </div>
@@ -1430,7 +1435,7 @@
                     <div class="module-card-info">
                         <h3 class="module-card-name">ROCS & Efficiency — Retour sur coût créatif</h3>
                         <div class="module-card-meta">
-                            <span>19 fonctionnalités</span>
+                            <span>19 fonc.</span>
                             <span>800 €</span>
                         </div>
                     </div>
@@ -1444,7 +1449,7 @@
                     <div class="module-card-info">
                         <h3 class="module-card-name">Planning — Objectifs & tournages</h3>
                         <div class="module-card-meta">
-                            <span>21 fonctionnalités</span>
+                            <span>21 fonc.</span>
                             <span>900 €</span>
                         </div>
                     </div>
@@ -1458,7 +1463,7 @@
                     <div class="module-card-info">
                         <h3 class="module-card-name">Team Scorecard — Performance de l'équipe</h3>
                         <div class="module-card-meta">
-                            <span>20 fonctionnalités</span>
+                            <span>20 fonc.</span>
                             <span>700 €</span>
                         </div>
                     </div>
@@ -1472,7 +1477,7 @@
                     <div class="module-card-info">
                         <h3 class="module-card-name">CAN Portal — Espace créateurs</h3>
                         <div class="module-card-meta">
-                            <span>23 fonctionnalités</span>
+                            <span>23 fonc.</span>
                             <span>900 €</span>
                         </div>
                     </div>
@@ -1486,7 +1491,7 @@
                     <div class="module-card-info">
                         <h3 class="module-card-name">Creator Performance — Vue admin des créateurs</h3>
                         <div class="module-card-meta">
-                            <span>25 fonctionnalités</span>
+                            <span>25 fonc.</span>
                             <span>700 €</span>
                         </div>
                     </div>
@@ -1500,7 +1505,7 @@
                     <div class="module-card-info">
                         <h3 class="module-card-name">Page détail créative — Fiche complète</h3>
                         <div class="module-card-meta">
-                            <span>49 fonctionnalités</span>
+                            <span>49 fonc.</span>
                             <span>1 600 €</span>
                         </div>
                     </div>
@@ -1514,7 +1519,7 @@
                     <div class="module-card-info">
                         <h3 class="module-card-name">Transcription automatique (Whisper AI)</h3>
                         <div class="module-card-meta">
-                            <span>32 fonctionnalités</span>
+                            <span>32 fonc.</span>
                             <span>1 500 €</span>
                         </div>
                     </div>
@@ -1528,7 +1533,7 @@
                     <div class="module-card-info">
                         <h3 class="module-card-name">Système de badges — Gamification équipe</h3>
                         <div class="module-card-meta">
-                            <span>28 fonctionnalités</span>
+                            <span>28 fonc.</span>
                             <span>1 100 €</span>
                         </div>
                     </div>
@@ -1542,7 +1547,7 @@
                     <div class="module-card-info">
                         <h3 class="module-card-name">Système de récompenses — Gamification créateurs</h3>
                         <div class="module-card-meta">
-                            <span>39 fonctionnalités</span>
+                            <span>39 fonc.</span>
                             <span>500 €</span>
                         </div>
                     </div>
@@ -1556,7 +1561,7 @@
                     <div class="module-card-info">
                         <h3 class="module-card-name">Centre de notifications</h3>
                         <div class="module-card-meta">
-                            <span>34 fonctionnalités</span>
+                            <span>34 fonc.</span>
                             <span>600 €</span>
                         </div>
                     </div>
@@ -1570,7 +1575,7 @@
                     <div class="module-card-info">
                         <h3 class="module-card-name">Mise en production & accompagnement</h3>
                         <div class="module-card-meta">
-                            <span>90 fonctionnalités</span>
+                            <span>90 fonc.</span>
                             <span>2 300 €</span>
                         </div>
                     </div>
