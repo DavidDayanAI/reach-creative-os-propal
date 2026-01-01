@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative OS — TURING Labs × REACH</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #000000;
+            --white: #ffffff;
+            --off-white: #f8f8f8;
+            --gray: #888888;
+            --light-gray: #e0e0e0;
+            --dark-gray: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+            font-size: 14px;
+            overflow-x: hidden;
+        }
+
+        /* Noise overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--black); }
+        ::-webkit-scrollbar-thumb { background: var(--white); }
+
+        /* Progress bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--white);
+            z-index: 10001;
+            transition: width 0.1s ease;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 20px 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-group .logo-text {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .logo-separator {
+            font-size: 18px;
+            font-weight: 300;
+            opacity: 0.4;
+        }
+
+        .nav-items {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-items a {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-items a:hover {
+            color: var(--white);
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 48px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--gray);
+            margin-bottom: 32px;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 0.2s forwards;
+        }
+
+        .hero-title {
+            font-size: clamp(64px, 14vw, 180px);
+            font-weight: 800;
+            line-height: 0.9;
+            letter-spacing: -8px;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 0.4s forwards;
+        }
+
+        .hero-description {
+            font-size: 16px;
+            color: var(--gray);
+            max-width: 600px;
+            line-height: 1.8;
+            margin-bottom: 64px;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 0.6s forwards;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 64px;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 0.8s forwards;
+        }
+
+        .stat-value {
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: -2px;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--gray);
+        }
+
+        .hero-image {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 45%;
+            height: 100%;
+            opacity: 0;
+            animation: fadeIn 1s ease 0.5s forwards;
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(1.1);
+            opacity: 0.7;
+        }
+
+        .hero-image::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, var(--black) 0%, transparent 50%);
+            z-index: 1;
+        }
+
+        /* Section */
+        section {
+            padding: 100px 48px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            gap: 24px;
+            margin-bottom: 64px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .section-number {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 400;
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        /* Module Navigation */
+        .module-nav {
+            position: sticky;
+            top: 80px;
+            z-index: 100;
+            background: var(--black);
+            padding: 16px 0;
+            margin-bottom: 48px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            overflow-x: auto;
+            display: flex;
+            gap: 8px;
+        }
+
+        .module-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .module-nav-item {
+            flex-shrink: 0;
+            padding: 12px 20px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--gray);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .module-nav-item:hover {
+            border-color: var(--white);
+            color: var(--white);
+        }
+
+        .module-nav-item.active {
+            background: var(--white);
+            color: var(--black);
+            border-color: var(--white);
+        }
+
+        /* Modules Grid */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 24px;
+            margin-bottom: 64px;
+        }
+
+        /* Module Card */
+        .module-card {
+            background: var(--dark-gray);
+            border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--white);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .module-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .module-card:hover {
+            border-color: rgba(255,255,255,0.3);
+            transform: translateY(-4px);
+        }
+
+        .module-card[data-module="17"] {
+            grid-column: 1 / -1;
+        }
+
+        .module-card-header {
+            padding: 32px;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .module-card-number {
+            font-size: 48px;
+            font-weight: 800;
+            opacity: 0.15;
+            line-height: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .module-card:hover .module-card-number {
+            opacity: 0.4;
+        }
+
+        .module-card-info {
+            flex: 1;
+        }
+
+        .module-card-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .module-card-meta {
+            display: flex;
+            gap: 24px;
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .module-card-expand {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .module-card:hover .module-card-expand {
+            background: var(--white);
+            color: var(--black);
+            border-color: var(--white);
+        }
+
+        /* Module Modal */
+        .module-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.99);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+            overflow-y: auto;
+        }
+
+        .module-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .module-modal {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 120px 48px 80px;
+            transform: translateY(40px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .module-modal-overlay.active .module-modal {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .module-modal-close {
+            position: fixed;
+            top: 24px;
+            right: 48px;
+            width: 48px;
+            height: 48px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: var(--white);
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 2001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .module-modal-close:hover {
+            background: var(--white);
+            color: var(--black);
+            border-color: var(--white);
+            transform: rotate(90deg);
+        }
+
+        .module-modal-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 32px;
+            margin-bottom: 64px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .module-modal-number {
+            font-size: 120px;
+            font-weight: 800;
+            opacity: 0.1;
+            line-height: 0.8;
+        }
+
+        .module-modal-info h2 {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+        }
+
+        .module-modal-meta {
+            display: flex;
+            gap: 32px;
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .module-modal-meta strong {
+            color: var(--white);
+        }
+
+        .module-modal-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .module-section {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 0;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: sectionFadeIn 0.5s ease forwards;
+        }
+
+        .module-section:last-child {
+            border-bottom: none;
+        }
+
+        .module-section-header {
+            padding: 24px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .module-section-header:hover {
+            padding-left: 16px;
+        }
+
+        .module-section-title {
+            font-size: 15px;
+            text-transform: none;
+            letter-spacing: 0;
+            color: var(--white);
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-weight: 500;
+        }
+
+        .module-section-title::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: var(--white);
+            flex-shrink: 0;
+        }
+
+        .module-section.open .module-section-title::before {
+            background: transparent;
+            border: 2px solid var(--white);
+        }
+
+        .section-toggle {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: var(--gray);
+            font-size: 12px;
+        }
+
+        .section-toggle-count {
+            background: rgba(255,255,255,0.1);
+            padding: 4px 12px;
+            font-size: 11px;
+        }
+
+        .section-toggle-icon {
+            font-size: 20px;
+            transition: transform 0.4s ease;
+            width: 24px;
+            text-align: center;
+        }
+
+        .module-section.open .section-toggle-icon {
+            transform: rotate(45deg);
+        }
+
+        .module-section {
+            transition: all 0.3s ease;
+        }
+
+        .module-section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+
+        .module-section.open .module-section-content {
+            max-height: 3000px;
+            transition: max-height 0.6s ease-in-out;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-auto-flow: column;
+            gap: 0;
+            padding: 0 0 32px 0;
+            margin-left: 26px;
+            border-left: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .feature-item {
+            font-size: 13px;
+            color: rgba(255,255,255,0.85);
+            padding: 12px 24px;
+            padding-left: 24px;
+            position: relative;
+            line-height: 1.6;
+            border-bottom: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .feature-item:hover {
+            color: var(--white);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .feature-item::before {
+            content: counter(feature);
+            counter-increment: feature;
+            font-size: 10px;
+            color: var(--gray);
+            min-width: 20px;
+            padding-top: 2px;
+        }
+
+        .feature-item:hover::before {
+            color: var(--white);
+        }
+
+        .feature-list {
+            counter-reset: feature;
+        }
+
+        @media (max-width: 768px) {
+            .feature-list {
+                grid-template-columns: 1fr;
+                grid-auto-flow: row;
+                grid-template-rows: auto !important;
+            }
+        }
+
+        .module-section:nth-child(1) { animation-delay: 0.1s; }
+        .module-section:nth-child(2) { animation-delay: 0.2s; }
+        .module-section:nth-child(3) { animation-delay: 0.3s; }
+        .module-section:nth-child(4) { animation-delay: 0.4s; }
+        .module-section:nth-child(5) { animation-delay: 0.5s; }
+        .module-section:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes sectionFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        
+
+        /* Module Nav in Modal */
+        .module-modal-nav {
+            display: flex;
+            gap: 16px;
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .module-modal-nav button {
+            flex: 1;
+            padding: 20px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--white);
+            font-family: inherit;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .module-modal-nav button:hover {
+            background: var(--white);
+            color: var(--black);
+            border-color: var(--white);
+        }
+
+        .module-modal-nav button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .module-modal-nav button:disabled:hover {
+            background: transparent;
+            color: var(--white);
+        }
+
+        /* Timeline */
+        .timeline-section {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        .timeline-section .section-header {
+            border-bottom-color: rgba(0,0,0,0.1);
+        }
+
+        .timeline-section .section-number {
+            color: var(--gray);
+        }
+
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            border: 1px solid var(--light-gray);
+        }
+
+        .timeline-item {
+            padding: 40px 16px;
+            text-align: center;
+            border-right: 1px solid var(--light-gray);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .timeline-item:last-child {
+            border-right: none;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--black);
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 0;
+        }
+
+        .timeline-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .timeline-item:hover {
+            color: var(--white);
+        }
+
+        .timeline-item:hover .timeline-label {
+            color: var(--gray);
+        }
+
+        .timeline-item > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-week {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .timeline-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--gray);
+            transition: color 0.3s ease;
+        }
+
+        /* Devis Section */
+        .devis-section {
+            background: var(--off-white);
+            color: var(--black);
+        }
+
+        .devis-section .section-header {
+            border-bottom-color: rgba(0,0,0,0.1);
+        }
+
+        .devis-section .section-number {
+            color: var(--gray);
+        }
+
+        .devis-table {
+            width: 100%;
+            margin-bottom: 48px;
+        }
+
+        .devis-row {
+            display: grid;
+            grid-template-columns: 60px 1fr 100px 120px;
+            gap: 24px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--light-gray);
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .devis-row:not(:first-child):hover {
+            background: rgba(0,0,0,0.02);
+            padding-left: 16px;
+            padding-right: 16px;
+            margin-left: -16px;
+            margin-right: -16px;
+        }
+
+        .devis-row:first-child {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--gray);
+            padding-bottom: 16px;
+        }
+
+        .devis-row-num {
+            font-weight: 600;
+            color: var(--gray);
+        }
+
+        .devis-row-name {
+            font-weight: 500;
+        }
+
+        .devis-row-features {
+            text-align: right;
+            color: var(--gray);
+            font-size: 13px;
+        }
+
+        .devis-row-price {
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .devis-subtotal {
+            display: flex;
+            justify-content: space-between;
+            padding: 24px 0;
+            border-bottom: 1px solid var(--light-gray);
+            font-size: 15px;
+        }
+
+        .devis-subtotal-label {
+            color: var(--gray);
+        }
+
+        .devis-subtotal-value {
+            font-weight: 600;
+        }
+
+        .devis-extras {
+            margin-top: 32px;
+            padding-top: 32px;
+            border-top: 2px solid var(--black);
+        }
+
+        .devis-extra-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 0;
+            font-size: 15px;
+        }
+
+        .devis-extra-row.discount .devis-extra-value {
+            color: var(--gray);
+        }
+
+        .devis-total {
+            background: var(--black);
+            color: var(--white);
+            padding: 32px;
+            margin-top: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .devis-total-label {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .devis-total-value {
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: -2px;
+        }
+
+        .devis-note {
+            margin-top: 24px;
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        /* CTA */
+        .cta-section {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '→';
+            position: absolute;
+            font-size: 40vw;
+            font-weight: 800;
+            opacity: 0.05;
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--gray);
+            margin-bottom: 24px;
+        }
+
+        .cta-title {
+            font-size: clamp(32px, 6vw, 64px);
+            font-weight: 800;
+            letter-spacing: -3px;
+            margin-bottom: 16px;
+        }
+
+        .cta-subtitle {
+            color: var(--gray);
+            margin-bottom: 48px;
+            font-size: 14px;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            padding: 24px 48px;
+            background: var(--white);
+            color: var(--black);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 2px solid var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--black);
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 0;
+        }
+
+        .cta-button:hover::before {
+            transform: translateX(0);
+        }
+
+        .cta-button span,
+        .cta-button svg {
+            position: relative;
+            z-index: 1;
+            transition: color 0.4s ease, stroke 0.4s ease, transform 0.4s ease;
+        }
+
+        .cta-button:hover span {
+            color: var(--white);
+        }
+
+        .cta-button:hover svg {
+            stroke: var(--white);
+            transform: translateX(8px);
+        }
+
+        /* Footer */
+        footer {
+            padding: 24px 48px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--gray);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mobile */
+        @media (max-width: 1024px) {
+            .hero-image { display: none; }
+            .hero-content { max-width: 100%; }
+            .modules-grid { grid-template-columns: 1fr; }
+            .timeline-grid { grid-template-columns: repeat(4, 1fr); }
+            .timeline-item:nth-child(4) { border-right: none; }
+            .timeline-item:nth-child(n+5) { border-top: 1px solid var(--light-gray); }
+            .module-modal-sections { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 16px 24px; }
+            .nav-items { display: none; }
+            section { padding: 64px 24px; }
+            .hero { padding: 100px 24px 64px; }
+            .hero-title { letter-spacing: -4px; }
+            .hero-stats { flex-wrap: wrap; gap: 32px; }
+            .stat-value { font-size: 36px; }
+            .module-nav { padding: 12px 0; margin-bottom: 32px; }
+            .module-card-header { padding: 24px; }
+            .module-card-number { font-size: 36px; }
+            .module-card-name { font-size: 14px; }
+            .module-modal { padding: 100px 24px 60px; }
+            .module-modal-close { right: 24px; top: 16px; }
+            .module-modal-header { flex-direction: column; gap: 16px; }
+            .module-modal-number { font-size: 64px; }
+            .module-modal-info h2 { font-size: 24px; }
+            .module-section { padding: 24px; }
+            .timeline-grid { grid-template-columns: repeat(2, 1fr); }
+            .timeline-item { padding: 24px 12px; }
+            .timeline-item:nth-child(2n) { border-right: none; }
+            .timeline-item:nth-child(n+3) { border-top: 1px solid var(--light-gray); }
+            .timeline-week { font-size: 22px; }
+            .devis-row {
+                grid-template-columns: 40px 1fr 80px;
+                gap: 12px;
+                font-size: 13px;
+            }
+            .devis-row-features { display: none; }
+            .devis-total-value { font-size: 32px; }
+            .cta-button { padding: 20px 32px; }
+            footer {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title { font-size: 48px; letter-spacing: -3px; }
+            .section-title { font-size: 24px; }
+            .module-modal-nav { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-group">
+            <span class="logo-text">TURING</span>
+            <span class="logo-separator">×</span>
+            <span class="logo-text">REACH</span>
+        </div>
+        <nav class="nav-items">
+            <a href="#modules">Modules</a>
+            <a href="#planning">Planning</a>
+            <a href="#devis">Devis</a>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <p class="hero-label">Proposition commerciale — Janvier 2026</p>
+            <h1 class="hero-title">CREATIVE OS</h1>
+            <p class="hero-description">
+                Plateforme de gestion des créatives publicitaires.<br>
+                Analyse de performance, planification et gestion d'équipe créative en temps réel.
+            </p>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-value">581</span>
+                    <span class="stat-label">Fonctionnalités</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">17</span>
+                    <span class="stat-label">Modules</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">8</span>
+                    <span class="stat-label">Semaines</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modules -->
+    <section id="modules">
+        <div class="section-header">
+            <span class="section-number">01</span>
+            <h2 class="section-title">Périmètre fonctionnel</h2>
+        </div>
+
+        <!-- Module Navigation -->
+        <div class="module-nav">
+            <button class="module-nav-item active" data-filter="all">Tous</button>
+            <button class="module-nav-item" data-filter="core">Core</button>
+            <button class="module-nav-item" data-filter="pages">Pages</button>
+            <button class="module-nav-item" data-filter="features">Features</button>
+            <button class="module-nav-item" data-filter="deploy">Déploiement</button>
+        </div>
+
+        <!-- Modules Grid -->
+        <div class="modules-grid">
+            <div class="module-card reveal" data-module="1" data-category="core">
+                <div class="module-card-header">
+                    <span class="module-card-number">01</span>
+                    <div class="module-card-info">
+                        <h3 class="module-card-name">Connexion sécurisée & gestion des utilisateurs</h3>
+                        <div class="module-card-meta">
+                            <span>45 fonctionnalités</span>
+                            <span>3 280 €</span>
+                        </div>
+                    </div>
+                    <div class="module-card-expand">→</div>
+                </div>
+            </div>
+
+            <div class="module-card reveal" data-module="2" data-category="core">
+                <div class="module-card-header">
+                    <span class="module-card-number">02</span>
+                    <div class="module-card-info">
+                        <h3 class="module-card-name">Import automatique des données Google Sheets</h3>
+                        <div class="module-card-meta">
+                            <span>52 fonctionnalités</span>
+                            <span>2 800 €</span>
+                        </div>
+                    </div>
+                    <div class="module-card-expand">→</div>
+                </div>
+            </div>
+
+            <div class="module-card reveal" data-module="3" data-category="core">
+                <div class="module-card-header">
+                    <span class="module-card-number">03</span>
+                    <div class="module-card-info">
+                        <h3 class="module-card-name">Intégration vidéo Frame.io</h3>
+                        <div class="module-card-meta">
+                            <span>28 fonctionnalités</span>
+                            <span>1 600 €</span>
+                        </div>
+                    </div>
+                    <div class="module-card-expand">→</div>
+                </div>
+            </div>
+
+            <div class="module-card reveal" data-module="4" data-category="core">
+                <div class="module-card-header">
+                    <span class="module-card-number">04</span>
+                    <div class="module-card-info">
+                        <h3 class="module-card-name">Architecture base de données Supabase</h3>
+                        <div class="module-card-meta">
+                            <span>34 fonctionnalités</span>
+                            <span>2 500 €</span>
+                        </div>
+                    </div>
+                    <div class="module-card-expand">→</div>
+                </div>
+            </div>
+
+            <div class="module-card reveal" data-module="5" data-category="pages">
+                <div class="module-card-header">
+                    <span class="module-card-number">05</span>
+                    <div class="module-card-info">
+                        <h3 class="module-card-name">Dashboard Overview — Vue globale</h3>
+                        <div class="module-card-meta">
+                            <span>20 fonctionnalités</span>
+                            <span>1 100 €</span>
+                        </div>
+                    </div>
+                    <div class="module-card-expand">→</div>
+                </div>
+            </div>
+
+            <div class="module-card reveal" data-module="6" data-category="pages">
+                <div class="module-card-header">
+                    <span class="module-card-number">06</span>
+                    <div class="module-card-info">
+                        <h3 class="module-card-name">Creative Analysis — Analyse des performances</h3>
+                        <div class="module-card-meta">
+                            <span>22 fonctionnalités</span>
+                            <span>900 €</span>
+                        </div>
+                    </div>
+                    <div class="module-card-expand">→</div>
+                </div>
+            </div>
+
+            <div class="module-card reveal" data-module="7" data-category="pages">
+                <div class="module-card-header">
+                    <span class="module-card-number">07</span>
+                    <div class="module-card-info">
+                        <h3 class="module-card-name">ROCS & Efficiency — Retour sur coût créatif</h3>
+                        <div class="module-card-meta">
+                            <span>19 fonctionnalités</span>
+                            <span>800 €</span>
+                        </div>
+                    </div>
+                    <div class="module-card-expand">→</div>
+                </div>
+            </div>
+
+            <div class="module-card reveal" data-module="8" data-category="pages">
+                <div class="module-card-header">
+                    <span class="module-card-number">08</span>
+                    <div class="module-card-info">
+                        <h3 class="module-card-name">Planning — Objectifs & tournages</h3>
+                        <div class="module-card-meta">
+                            <span>21 fonctionnalités</span>
+                            <span>900 €</span>
+                        </div>
+                    </div>
+                    <div class="module-card-expand">→</div>
+                </div>
+            </div>
+
+            <div class="module-card reveal" data-module="9" data-category="pages">
+                <div class="module-card-header">
+                    <span class="module-card-number">09</span>
+                    <div class="module-card-info">
+                        <h3 class="module-card-name">Team Scorecard — Performance de l'équipe</h3>
+                        <div class="module-card-meta">
+                            <span>20 fonctionnalités</span>
+                            <span>700 €</span>
+                        </div>
+                    </div>
+                    <div class="module-card-expand">→</div>
+                </div>
+            </div>
+
+            <div class="module-card reveal" data-module="10" data-category="pages">
+                <div class="module-card-header">
+                    <span class="module-card-number">10</span>
+                    <div class="module-card-info">
+                        <h3 class="module-card-name">CAN Portal — Espace créateurs</h3>
+                        <div class="module-card-meta">
+                            <span>23 fonctionnalités</span>
+                            <span>900 €</span>
+                        </div>
+                    </div>
+                    <div class="module-card-expand">→</div>
+                </div>
+            </div>
+
+            <div class="module-card reveal" data-module="11" data-category="pages">
+                <div class="module-card-header">
+                    <span class="module-card-number">11</span>
+                    <div class="module-card-info">
+                        <h3 class="module-card-name">Creator Performance — Vue admin des créateurs</h3>
+                        <div class="module-card-meta">
+                            <span>25 fonctionnalités</span>
+                            <span>700 €</span>
+                        </div>
+                    </div>
+                    <div class="module-card-expand">→</div>
+                </div>
+            </div>
+
+            <div class="module-card reveal" data-module="12" data-category="pages">
+                <div class="module-card-header">
+                    <span class="module-card-number">12</span>
+                    <div class="module-card-info">
+                        <h3 class="module-card-name">Page détail créative — Fiche complète</h3>
+                        <div class="module-card-meta">
+                            <span>49 fonctionnalités</span>
+                            <span>1 600 €</span>
+                        </div>
+                    </div>
+                    <div class="module-card-expand">→</div>
+                </div>
+            </div>
+
+            <div class="module-card reveal" data-module="13" data-category="features">
+                <div class="module-card-header">
+                    <span class="module-card-number">13</span>
+                    <div class="module-card-info">
+                        <h3 class="module-card-name">Transcription automatique (Whisper AI)</h3>
+                        <div class="module-card-meta">
+                            <span>32 fonctionnalités</span>
+                            <span>1 500 €</span>
+                        </div>
+                    </div>
+                    <div class="module-card-expand">→</div>
+                </div>
+            </div>
+
+            <div class="module-card reveal" data-module="14" data-category="features">
+                <div class="module-card-header">
+                    <span class="module-card-number">14</span>
+                    <div class="module-card-info">
+                        <h3 class="module-card-name">Système de badges — Gamification équipe</h3>
+                        <div class="module-card-meta">
+                            <span>28 fonctionnalités</span>
+                            <span>1 100 €</span>
+                        </div>
+                    </div>
+                    <div class="module-card-expand">→</div>
+                </div>
+            </div>
+
+            <div class="module-card reveal" data-module="15" data-category="features">
+                <div class="module-card-header">
+                    <span class="module-card-number">15</span>
+                    <div class="module-card-info">
+                        <h3 class="module-card-name">Système de récompenses — Gamification créateurs</h3>
+                        <div class="module-card-meta">
+                            <span>39 fonctionnalités</span>
+                            <span>500 €</span>
+                        </div>
+                    </div>
+                    <div class="module-card-expand">→</div>
+                </div>
+            </div>
+
+            <div class="module-card reveal" data-module="16" data-category="features">
+                <div class="module-card-header">
+                    <span class="module-card-number">16</span>
+                    <div class="module-card-info">
+                        <h3 class="module-card-name">Centre de notifications</h3>
+                        <div class="module-card-meta">
+                            <span>34 fonctionnalités</span>
+                            <span>600 €</span>
+                        </div>
+                    </div>
+                    <div class="module-card-expand">→</div>
+                </div>
+            </div>
+
+            <div class="module-card reveal" data-module="17" data-category="deploy">
+                <div class="module-card-header">
+                    <span class="module-card-number">17</span>
+                    <div class="module-card-info">
+                        <h3 class="module-card-name">Mise en production & accompagnement</h3>
+                        <div class="module-card-meta">
+                            <span>90 fonctionnalités</span>
+                            <span>2 300 €</span>
+                        </div>
+                    </div>
+                    <div class="module-card-expand">→</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Module Modal -->
+    <div class="module-modal-overlay" id="moduleModal">
+        <button class="module-modal-close" onclick="closeModal()">×</button>
+        <div class="module-modal">
+            <div class="module-modal-header">
+                <span class="module-modal-number" id="modalNumber">01</span>
+                <div class="module-modal-info">
+                    <h2 id="modalTitle">Module Title</h2>
+                    <div class="module-modal-meta">
+                        <span><strong id="modalFeatures">45</strong> fonctionnalités</span>
+                        <span><strong id="modalPrice">3 280 €</strong></span>
+                    </div>
+                </div>
+            </div>
+            <div class="module-modal-sections" id="modalContent">
+                <!-- Content will be injected here -->
+            </div>
+            <div class="module-modal-nav">
+                <button onclick="navigateModule(-1)" id="prevModule">← Module précédent</button>
+                <button onclick="navigateModule(1)" id="nextModule">Module suivant →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline -->
+    <section class="timeline-section" id="planning">
+        <div class="section-header">
+            <span class="section-number">02</span>
+            <h2 class="section-title">Planning de réalisation</h2>
+        </div>
+
+        <div class="timeline-grid">
+            <div class="timeline-item">
+                <p class="timeline-week">S1</p>
+                <p class="timeline-label">Setup</p>
+            </div>
+            <div class="timeline-item">
+                <p class="timeline-week">S2</p>
+                <p class="timeline-label">Auth</p>
+            </div>
+            <div class="timeline-item">
+                <p class="timeline-week">S3</p>
+                <p class="timeline-label">Sync</p>
+            </div>
+            <div class="timeline-item">
+                <p class="timeline-week">S4</p>
+                <p class="timeline-label">Review</p>
+            </div>
+            <div class="timeline-item">
+                <p class="timeline-week">S5</p>
+                <p class="timeline-label">Pages</p>
+            </div>
+            <div class="timeline-item">
+                <p class="timeline-week">S6</p>
+                <p class="timeline-label">Review</p>
+            </div>
+            <div class="timeline-item">
+                <p class="timeline-week">S7</p>
+                <p class="timeline-label">Tests</p>
+            </div>
+            <div class="timeline-item">
+                <p class="timeline-week">S8</p>
+                <p class="timeline-label">Launch</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Devis -->
+    <section class="devis-section" id="devis">
+        <div class="section-header">
+            <span class="section-number">03</span>
+            <h2 class="section-title">Devis</h2>
+        </div>
+
+        <div class="devis-table">
+            <div class="devis-row">
+                <span>N°</span>
+                <span>Module</span>
+                <span>Fonc.</span>
+                <span>Montant</span>
+            </div>
+            <div class="devis-row"><span class="devis-row-num">01</span><span class="devis-row-name">Connexion sécurisée & gestion des utilisateurs</span><span class="devis-row-features">45</span><span class="devis-row-price">3 280 €</span></div>
+            <div class="devis-row"><span class="devis-row-num">02</span><span class="devis-row-name">Import automatique des données Google Sheets</span><span class="devis-row-features">52</span><span class="devis-row-price">2 800 €</span></div>
+            <div class="devis-row"><span class="devis-row-num">03</span><span class="devis-row-name">Intégration vidéo Frame.io</span><span class="devis-row-features">28</span><span class="devis-row-price">1 600 €</span></div>
+            <div class="devis-row"><span class="devis-row-num">04</span><span class="devis-row-name">Architecture base de données Supabase</span><span class="devis-row-features">34</span><span class="devis-row-price">2 500 €</span></div>
+            <div class="devis-row"><span class="devis-row-num">05</span><span class="devis-row-name">Dashboard Overview — Vue globale</span><span class="devis-row-features">20</span><span class="devis-row-price">1 100 €</span></div>
+            <div class="devis-row"><span class="devis-row-num">06</span><span class="devis-row-name">Creative Analysis — Analyse des performances</span><span class="devis-row-features">22</span><span class="devis-row-price">900 €</span></div>
+            <div class="devis-row"><span class="devis-row-num">07</span><span class="devis-row-name">ROCS & Efficiency — Retour sur coût créatif</span><span class="devis-row-features">19</span><span class="devis-row-price">800 €</span></div>
+            <div class="devis-row"><span class="devis-row-num">08</span><span class="devis-row-name">Planning — Objectifs & tournages</span><span class="devis-row-features">21</span><span class="devis-row-price">900 €</span></div>
+            <div class="devis-row"><span class="devis-row-num">09</span><span class="devis-row-name">Team Scorecard — Performance de l'équipe</span><span class="devis-row-features">20</span><span class="devis-row-price">700 €</span></div>
+            <div class="devis-row"><span class="devis-row-num">10</span><span class="devis-row-name">CAN Portal — Espace créateurs</span><span class="devis-row-features">23</span><span class="devis-row-price">900 €</span></div>
+            <div class="devis-row"><span class="devis-row-num">11</span><span class="devis-row-name">Creator Performance — Vue admin des créateurs</span><span class="devis-row-features">25</span><span class="devis-row-price">700 €</span></div>
+            <div class="devis-row"><span class="devis-row-num">12</span><span class="devis-row-name">Page détail créative — Fiche complète</span><span class="devis-row-features">49</span><span class="devis-row-price">1 600 €</span></div>
+            <div class="devis-row"><span class="devis-row-num">13</span><span class="devis-row-name">Transcription automatique (Whisper AI)</span><span class="devis-row-features">32</span><span class="devis-row-price">1 500 €</span></div>
+            <div class="devis-row"><span class="devis-row-num">14</span><span class="devis-row-name">Système de badges — Gamification équipe</span><span class="devis-row-features">28</span><span class="devis-row-price">1 100 €</span></div>
+            <div class="devis-row"><span class="devis-row-num">15</span><span class="devis-row-name">Système de récompenses — Gamification créateurs</span><span class="devis-row-features">39</span><span class="devis-row-price">500 €</span></div>
+            <div class="devis-row"><span class="devis-row-num">16</span><span class="devis-row-name">Centre de notifications</span><span class="devis-row-features">34</span><span class="devis-row-price">600 €</span></div>
+            <div class="devis-row"><span class="devis-row-num">17</span><span class="devis-row-name">Mise en production & accompagnement</span><span class="devis-row-features">90</span><span class="devis-row-price">2 300 €</span></div>
+        </div>
+
+        <div class="devis-subtotal">
+            <span class="devis-subtotal-label">Sous-total développement (581 fonctionnalités)</span>
+            <span class="devis-subtotal-value">23 780 €</span>
+        </div>
+
+        <div class="devis-extras">
+            <div class="devis-extra-row">
+                <span class="devis-extra-label">Frais IP — Cession d'exclusivité</span>
+                <span class="devis-extra-value">7 000 €</span>
+            </div>
+            <div class="devis-extra-row">
+                <span class="devis-extra-label">Sous-total</span>
+                <span class="devis-extra-value">30 780 €</span>
+            </div>
+            <div class="devis-extra-row discount">
+                <span class="devis-extra-label">Réduction partenariat (−22%)</span>
+                <span class="devis-extra-value">−6 780 €</span>
+            </div>
+        </div>
+
+        <div class="devis-total">
+            <span class="devis-total-label">Total HT</span>
+            <span class="devis-total-value">24 000 €</span>
+        </div>
+
+        <p class="devis-note">
+            Infrastructure mensuelle estimée : 100-150 €/mois (Supabase Pro, Vercel Pro, Whisper API, domaine)<br>
+            Durée estimée : 8 semaines • Validité du devis : 7 jours
+        </p>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" id="contact">
+        <div class="cta-content">
+            <p class="cta-label">On y va ?</p>
+            <h2 class="cta-title">LET'S BUILD THIS</h2>
+            <p class="cta-subtitle">Devis valable 7 jours</p>
+            <a href="https://wa.me/33629244900?text=Allez%20bro%2C%20let%27s%20go%20on%20y%20va%20%21" class="cta-button" target="_blank">
+                <span>Valider le devis</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <span>TURING Labs — Agence de développement sur-mesure</span>
+        <span>01.01.2026</span>
+    </footer>
+
+    <script>
+        // Module Data
+        const modulesData = {
+            1: {
+                title: "Connexion sécurisée & gestion des utilisateurs",
+                features: 45,
+                price: "3 280 €",
+                sections: [
+                    {
+                        title: "Page de connexion",
+                        items: ["Créer la page de connexion avec champs email et mot de passe", "Afficher les messages d'erreur (identifiants incorrects)", "Ajouter le lien \"Mot de passe oublié\"", "Configurer Supabase Auth", "Créer l'endpoint API /api/auth/login", "Écrire la logique de vérification des identifiants", "Générer et stocker le token de session (durée 30 jours)", "Créer l'endpoint API /api/auth/logout"]
+                    },
+                    {
+                        title: "Lien magique pour les créateurs",
+                        items: ["Créer l'endpoint API /api/auth/magic-link/generate", "Générer un token unique et sécurisé", "Stocker le token avec date d'expiration (24h)", "Créer l'endpoint API /api/auth/magic-link/verify", "Invalider le token après première utilisation", "Configurer le service d'envoi d'emails (Resend)", "Créer le template de l'email avec le lien magique", "Créer la page d'accueil après clic sur le lien", "Connecter automatiquement le créateur et le rediriger vers son portail"]
+                    },
+                    {
+                        title: "Réinitialisation mot de passe",
+                        items: ["Créer l'endpoint API /api/auth/forgot-password", "Générer un token de réinitialisation avec expiration", "Créer le template de l'email de réinitialisation", "Créer l'endpoint API /api/auth/reset-password", "Créer la page \"Mot de passe oublié\" avec champ email", "Créer la page de saisie du nouveau mot de passe", "Invalider toutes les sessions après changement", "Afficher la confirmation de changement réussi"]
+                    },
+                    {
+                        title: "Système de permissions",
+                        items: ["Créer la table \"roles\" avec les 6 rôles", "Créer la table \"permissions\" (matrice rôle → pages autorisées)", "Écrire le middleware de vérification des permissions", "Appliquer la vérification à chaque route API", "Retourner erreur 403 si accès non autorisé", "Afficher un message d'erreur si accès refusé", "Rediriger vers une page autorisée si accès refusé"]
+                    },
+                    {
+                        title: "Gestion des utilisateurs",
+                        items: ["Créer l'endpoint API /api/users (GET liste paginée)", "Écrire la requête SQL avec filtrage par rôle et par marque", "Créer l'endpoint API /api/users/invite (POST)", "Programmer l'envoi de l'email d'invitation", "Créer l'endpoint API /api/users/:id (PUT modification)", "Créer l'endpoint API /api/users/:id/deactivate (POST)", "Créer l'endpoint API /api/users/:id/reactivate (POST)", "Créer la page listant tous les utilisateurs", "Afficher le tableau avec pagination (20 par page)", "Ajouter les filtres par rôle et par marque", "Créer la fenêtre popup d'invitation d'un nouvel utilisateur", "Créer la fenêtre popup de modification d'un utilisateur", "Ajouter les boutons Désactiver / Réactiver avec confirmation"]
+                    }
+                ]
+            },
+            2: {
+                title: "Import automatique des données Google Sheets",
+                features: 52,
+                price: "2 800 €",
+                sections: [
+                    { title: "Connexion à Google Sheets", items: ["Créer un projet Google Cloud Console", "Activer l'API Google Sheets", "Créer un compte de service avec clé JSON", "Stocker les credentials de manière sécurisée", "Créer le module googleSheetsClient.ts avec authentification"] },
+                    { title: "Configuration des sources de données", items: ["Créer la table \"sheet_configs\"", "Créer l'endpoint API /api/sync/sheets (GET liste)", "Créer l'endpoint API /api/sync/sheets (POST ajout)", "Créer l'endpoint API /api/sync/sheets/:id (PUT modification)", "Créer l'endpoint API /api/sync/sheets/:id (DELETE suppression)", "Créer l'endpoint API /api/sync/sheets/:id/test", "Créer la page de configuration des sources", "Afficher la liste des Sheets connectés avec leur statut", "Créer la fenêtre popup pour ajouter un nouveau Sheet", "Ajouter le bouton \"Tester la connexion\"", "Afficher le résultat du test"] },
+                    { title: "Correspondance des colonnes", items: ["Créer l'endpoint API /api/sync/sheets/:id/columns", "Lire la première ligne du Sheet pour détecter les colonnes", "Créer l'endpoint API /api/sync/sheets/:id/mapping", "Créer l'interface de correspondance colonnes Sheet ↔ champs app", "Valider que tous les champs obligatoires sont associés"] },
+                    { title: "Analyse de la nomenclature des Ads", items: ["Créer la fonction parseNomenclature(adName)", "Écrire la regex pour extraire PRODUIT, CREATOR, TYPE", "Écrire la regex pour extraire FUNCTION, ANGLE, HOOK", "Écrire la regex pour extraire AUDIENCE", "Gérer les nomenclatures mal formatées", "Logger les erreurs de parsing pour analyse"] },
+                    { title: "Synchronisation automatique", items: ["Créer le job Cron /api/cron/sync (toutes les 30 min)", "Écrire la boucle sur toutes les marques actives", "Lire les données du Sheet via l'API Google", "Comparer avec les données existantes", "Insérer les nouvelles lignes (INSERT)", "Mettre à jour les lignes modifiées (UPDATE)", "Conserver les lignes supprimées (soft delete)", "Réessayer automatiquement en cas d'échec (3 tentatives)", "Logger chaque synchronisation dans la table \"sync_logs\"", "Envoyer une notification admin en cas d'échec persistant"] },
+                    { title: "Synchronisation manuelle & tableau de bord", items: ["Créer l'endpoint API /api/sync/trigger/:brandId", "Créer l'endpoint API /api/sync/trigger-all", "Ajouter le bouton \"Forcer la sync\" par marque", "Ajouter le bouton \"Synchroniser tout\"", "Afficher le résultat (X ajoutées, Y modifiées, Z erreurs)", "Créer l'endpoint API /api/sync/status", "Créer l'endpoint API /api/sync/logs", "Créer la page de suivi des synchronisations", "Afficher le statut par marque (OK / Erreur / En cours)", "Afficher une alerte visuelle en cas d'erreur"] }
+                ]
+            },
+            3: {
+                title: "Intégration vidéo Frame.io",
+                features: 28,
+                price: "1 600 €",
+                sections: [
+                    { title: "Connexion à Frame.io", items: ["Créer un compte développeur Frame.io", "Générer un token API avec les permissions nécessaires", "Stocker le token de manière sécurisée", "Créer le module frameioClient.ts avec authentification", "Gérer les erreurs API (rate limiting, token expiré)"] },
+                    { title: "Configuration & association", items: ["Créer l'endpoint API /api/video/config (GET/PUT)", "Stocker la configuration (project_id, folder_id)", "Créer l'endpoint API /api/video/test", "Afficher le statut de connexion", "Créer l'endpoint API /api/video/match", "Écrire l'algorithme de matching par nom d'ad", "Stocker l'association creative_id ↔ frame_io_asset_id", "Créer le job de matching automatique après chaque sync", "Afficher la liste des vidéos sans correspondance", "Permettre l'association manuelle"] },
+                    { title: "Miniatures & lecteur vidéo", items: ["Créer l'endpoint API /api/video/thumbnail/:creativeId", "Appeler l'API Frame.io pour récupérer le thumbnail", "Redimensionner l'image en 300x200 pixels", "Compresser en JPEG qualité 80%", "Stocker dans Supabase Storage", "Mettre en cache le lien de la miniature", "Créer le lecteur vidéo réutilisable", "Intégrer le player embed Frame.io", "Ajouter les contrôles (play, pause, volume, fullscreen)", "Afficher la barre de progression", "Afficher le temps écoulé / durée totale", "Afficher une animation pendant le chargement"] }
+                ]
+            },
+            4: {
+                title: "Architecture base de données Supabase",
+                features: 34,
+                price: "2 500 €",
+                sections: [
+                    { title: "Configuration Supabase", items: ["Créer le projet Supabase (développement)", "Configurer les variables d'environnement", "Installer le client Supabase", "Créer le fichier supabaseClient.ts"] },
+                    { title: "Création des tables", items: ["Table \"brands\" (id, name, logo_url, created_at)", "Table \"users\" (id, email, role, brand_id, status)", "Table \"creatives\" (id, ad_name, ad_id, brand_id, metrics...)", "Table \"creators\" (id, name, email, commission_rate)", "Table \"team_members\" (id, user_id, role, hired_at)", "Table \"badges\" (id, name, description, icon, criteria)", "Table \"user_badges\" (user_id, badge_id, earned_at)", "Table \"rewards\" (id, level, name, description, criteria)", "Table \"reward_progress\" (creator_id, reward_id, progress)", "Table \"prompts\" (id, title, content, category, tags)", "Table \"notifications\" (id, user_id, type, message, read)", "Table \"sync_logs\" (id, brand_id, status, rows_added, timestamp)", "Table \"transcriptions\" (id, creative_id, text, language)", "Tables \"planning_ugc\", \"planning_bunkers\", \"planning_can\"", "Créer les relations entre tables (clés étrangères)", "Créer les index sur les colonnes fréquemment requêtées"] },
+                    { title: "Sécurité Row Level Security", items: ["Activer RLS sur toutes les tables", "Politique \"brands\" : admins voient tout, clients voient leur marque", "Politique \"creatives\" : filtrage par brand_id selon le rôle", "Politique \"creators\" : créateurs voient leurs propres données", "Politique \"team_members\" : visible par admins et membres eux-mêmes", "Politique \"prompts\" : visible par admins et scriptwriters", "Politique \"notifications\" : chaque user voit ses notifications", "Tester chaque politique avec différents rôles"] },
+                    { title: "Sauvegardes & maintenance", items: ["Activer les backups automatiques quotidiens", "Configurer la rétention sur 30 jours", "Documenter la procédure de restauration", "Configurer les alertes email en cas d'échec"] }
+                ]
+            },
+            5: {
+                title: "Dashboard Overview — Vue globale",
+                features: 20,
+                price: "1 100 €",
+                sections: [
+                    { title: "Calcul des indicateurs clés", items: ["Créer l'endpoint API /api/overview/kpis", "Requête SQL pour obtenir le CA total", "Requête SQL pour obtenir le spend total", "Requête SQL pour obtenir le ROAS global", "Requête SQL pour obtenir le ROCS global", "Requête SQL pour compter le nombre de créatives actives", "Requête SQL pour obtenir le Win Rate", "Requête SQL pour compter les winners (spend >= 10K)", "Calculer l'évolution vs période précédente", "Ajouter le paramètre de filtrage par marque"] },
+                    { title: "Graphiques & tableaux", items: ["Créer l'endpoint API /api/overview/production-output", "Requête SQL groupée par semaine/mois", "Afficher les détails au survol de chaque barre", "Créer l'endpoint API /api/overview/cost-evolution", "Requête SQL pour le coût moyen par mois", "Créer l'endpoint API /api/overview/top-winners", "Requête SQL avec ORDER BY spend DESC LIMIT 20", "Créer le tableau des winners", "Afficher les miniatures des vidéos", "Permettre de cliquer pour voir le détail"] }
+                ]
+            },
+            6: {
+                title: "Creative Analysis — Analyse des performances",
+                features: 22,
+                price: "900 €",
+                sections: [
+                    { title: "Système de filtres avancés", items: ["Créer l'endpoint API /api/analysis/filters", "Écrire la requête SQL dynamique avec clauses WHERE", "Récupérer les valeurs distinctes pour chaque dimension", "Créer les 6 filtres (Creator, Hair Type, Age, Angle, Format, Framework)", "Ajouter le bouton \"Réinitialiser les filtres\"", "Recharger les données à chaque changement de filtre"] },
+                    { title: "Calcul & visualisation", items: ["Créer l'endpoint API /api/analysis/scores", "Écrire l'algorithme de scoring (normalisation 0-100)", "Grouper les résultats par dimension", "Trier par score décroissant", "Créer l'endpoint API /api/analysis/combinations", "Écrire l'algorithme de détection des meilleures combinaisons", "Calculer le score global de chaque combinaison", "Afficher les 3 meilleures combinaisons"] },
+                    { title: "Générateur & export", items: ["Écrire l'algorithme de suggestion de combinaison", "Afficher la combinaison suggérée avec score estimé", "Ajouter le bouton \"Copier\" la combinaison", "Créer l'endpoint API /api/analysis/export", "Générer le fichier CSV avec toutes les colonnes", "Appliquer les filtres actuels à l'export", "Ajouter le bouton de téléchargement CSV"] }
+                ]
+            },
+            7: {
+                title: "ROCS & Efficiency — Retour sur coût créatif",
+                features: 19,
+                price: "800 €",
+                sections: [
+                    { title: "Indicateurs ROCS", items: ["Créer l'endpoint API /api/rocs/kpis", "Requête SQL pour le Cost Ratio moyen", "Requête SQL pour le ROCS moyen", "Requête SQL pour les dépenses totales", "Requête SQL pour compter les cohortes matures", "Calculer l'évolution vs mois précédent"] },
+                    { title: "Graphiques & tableaux", items: ["Créer l'endpoint API /api/rocs/trend", "Requête SQL groupée par mois avec calcul ROCS", "Calculer la ligne de tendance (régression linéaire)", "Créer l'endpoint API /api/rocs/cohorts", "Requête SQL pour ROCS par cohorte et par mois", "Créer le tableau avec colonnes M1, M2, M3, M4+", "Appliquer le code couleur selon performance", "Créer l'endpoint API /api/rocs/creators", "Requête SQL avec GROUP BY creator et calcul ROCS", "Créer le tableau d'efficacité des créateurs", "Permettre le tri par ROCS décroissant", "Ajouter le filtre par période"] }
+                ]
+            },
+            8: {
+                title: "Planning — Objectifs & tournages",
+                features: 21,
+                price: "900 €",
+                sections: [
+                    { title: "Vue UGC — Objectifs de production", items: ["Créer l'endpoint API /api/planning/ugc (GET)", "Requête SQL pour objectifs par marque et mois", "Requête SQL pour calculer le réalisé", "Créer l'endpoint API /api/planning/ugc (PUT)", "Créer l'endpoint API /api/planning/ugc/history"] },
+                    { title: "Vue Bunkers — Tournages", items: ["Créer l'endpoint API /api/planning/bunkers (GET)", "Créer l'endpoint API /api/planning/bunkers (POST)", "Créer l'endpoint API /api/planning/bunkers/:id (PUT)", "Créer l'endpoint API /api/planning/bunkers/:id (DELETE)", "Créer l'endpoint API /api/planning/bunkers/:id/checklist", "Gérer les 3 statuts (planifié, en cours, terminé)", "Créer la fenêtre popup d'ajout/modification", "Créer la checklist de validation interactive", "Ajouter la confirmation avant suppression"] },
+                    { title: "Vue CAN Programs", items: ["Créer l'endpoint API /api/planning/programs (GET)", "Créer l'endpoint API /api/planning/programs (POST)", "Créer l'endpoint API /api/planning/programs/:id/assign", "Créer la fenêtre popup de création de programme", "Créer l'interface d'assignation de créateurs", "Créer les onglets de navigation (UGC / Bunkers / CAN)", "Mémoriser la période sélectionnée dans l'URL"] }
+                ]
+            },
+            9: {
+                title: "Team Scorecard — Performance de l'équipe",
+                features: 20,
+                price: "700 €",
+                sections: [
+                    { title: "Classement des monteurs", items: ["Créer l'endpoint API /api/team/editors", "Requête SQL pour récupérer les monteurs avec leurs créatives", "Écrire l'algorithme de calcul du score (volume, revenue, winners)", "Joindre les badges de chaque monteur", "Trier par score décroissant", "Afficher le rang avec médailles pour le podium", "Afficher la photo de profil ou avatar par défaut", "Afficher les badges à côté du nom", "Permettre de cliquer pour voir les détails"] },
+                    { title: "Classement scriptwriters & production", items: ["Créer l'endpoint API /api/team/scriptwriters", "Adapter l'algorithme de scoring pour les scriptwriters", "Joindre les badges de chaque scriptwriter", "Créer l'endpoint API /api/team/production-breakdown", "Requête SQL avec GROUP BY format", "Calculer les pourcentages", "Afficher la légende interactive", "Créer l'endpoint API /api/team/top-winners", "Requête SQL avec ORDER BY spend DESC LIMIT 10", "Afficher miniature, nom, éditeur, spend", "Permettre de cliquer pour voir le détail"] }
+                ]
+            },
+            10: {
+                title: "CAN Portal — Espace créateurs",
+                features: 23,
+                price: "900 €",
+                sections: [
+                    { title: "Stats personnelles", items: ["Créer l'endpoint API /api/portal/my-stats", "Requête SQL pour calculer la commission totale", "Requête SQL pour calculer le revenue total généré", "Requête SQL pour compter les vidéos produites", "Requête SQL pour calculer le rang global", "Calculer l'évolution vs mois précédent"] },
+                    { title: "Progression récompenses", items: ["Créer l'endpoint API /api/portal/my-rewards", "Calculer la progression vers chaque palier", "Calculer la date estimée d'atteinte de chaque palier"] },
+                    { title: "Mes créatives", items: ["Créer l'endpoint API /api/portal/my-creatives", "Requête SQL avec tri par date ou par performance", "Requête SQL avec filtrage par statut", "Afficher miniature, nom, spend, revenue, statut", "Ajouter les contrôles de tri et filtre", "Permettre de cliquer pour voir le détail"] },
+                    { title: "Inspiration & leaderboard", items: ["Créer l'endpoint API /api/portal/inspiration", "Anonymiser les noms des autres créateurs", "Créer la grille d'inspiration", "Afficher miniatures et métriques", "Permettre de cliquer pour voir la vidéo", "Créer l'endpoint API /api/portal/leaderboard", "Mettre en évidence la position du créateur connecté", "Défiler automatiquement vers ma position"] }
+                ]
+            },
+            11: {
+                title: "Creator Performance — Vue admin des créateurs",
+                features: 25,
+                price: "700 €",
+                sections: [
+                    { title: "Indicateurs globaux", items: ["Créer l'endpoint API /api/creators/kpis", "Requête SQL pour dépenses totales sur créateurs", "Requête SQL pour revenue total généré", "Requête SQL pour ROCS moyen", "Requête SQL pour compter les créateurs actifs", "Calculer l'évolution vs période précédente"] },
+                    { title: "Tableau des créateurs", items: ["Créer l'endpoint API /api/creators/roster", "Requête SQL avec jointure créatives et calcul ROCS", "Écrire le tri dynamique par colonne", "Écrire le filtrage par statut", "Écrire la recherche par nom (LIKE query)", "Créer le tableau des créateurs", "Afficher photo, nom, nb vidéos, spend, revenue, ROCS", "Ajouter le filtre par statut", "Ajouter le champ de recherche"] },
+                    { title: "Graphiques & grille", items: ["Créer l'endpoint API /api/creators/rocs-trend", "Requête SQL groupée par mois et par créateur (top 5)", "Afficher une ligne par créateur avec couleurs distinctes", "Permettre de cliquer sur la légende pour masquer/afficher", "Afficher les détails au survol", "Créer l'endpoint API /api/creators/top-creatives", "Requête SQL avec ORDER BY spend DESC LIMIT 24", "Créer la grille de créatives (6x4)", "Afficher miniature + spend + revenue", "Permettre de cliquer pour voir le détail"] }
+                ]
+            },
+            12: {
+                title: "Page détail créative — Fiche complète",
+                features: 49,
+                price: "1 600 €",
+                sections: [
+                    { title: "Récupération des données", items: ["Créer l'endpoint API /api/creatives/:id", "Requête SQL pour toutes les infos de la créative", "Joindre les données de la marque (logo, nom)", "Joindre les données du créateur (nom, id)", "Joindre la transcription associée", "Joindre l'URL de la vidéo Frame.io", "Vérifier les permissions (RLS)", "Retourner erreur 404 si créative non trouvée", "Retourner erreur 403 si accès non autorisé"] },
+                    { title: "Page & lecteur vidéo", items: ["Créer la page de détail créative", "Créer l'URL /creative/:id", "Afficher une animation de chargement", "Afficher une page d'erreur si non trouvée", "Intégrer le lecteur vidéo en grand format (16:9)", "Ajouter les contrôles (play, pause, volume, fullscreen)", "Afficher la barre de progression", "Ajouter le raccourci clavier Espace pour play/pause"] },
+                    { title: "Affichage des métriques", items: ["Créer le panneau des métriques", "Afficher l'ad name complet", "Afficher la marque avec logo", "Afficher la date de lancement (formatée)", "Afficher le spend total (formaté en €)", "Afficher le revenue total (formaté en €)", "Afficher le ROAS (2 décimales)", "Afficher le reach (formaté K/M)", "Afficher les impressions (formatées K/M)", "Afficher le CTR, Hook Rate, Hold Rate (%)", "Afficher le CPM, CPC (€)"] },
+                    { title: "Nomenclature, transcription & actions", items: ["Afficher chaque champ parsé (Produit, Creator, Type...)", "Permettre de cliquer pour naviguer avec filtre", "Afficher les badges Winner/Unicorn", "Créer le panneau de transcription", "Afficher le texte transcrit formaté", "Afficher les timestamps en marge", "Ajouter le bouton \"Copier la transcription\"", "Ajouter le bouton \"Télécharger la vidéo\"", "Créer l'endpoint API /api/creatives/:id/download", "Récupérer l'URL signée avec expiration (1h)", "Ajouter le bouton \"Voir sur Meta\"", "Ajouter le bouton \"Partager\"", "Logger les téléchargements"] }
+                ]
+            },
+            13: {
+                title: "Transcription automatique (Whisper AI)",
+                features: 32,
+                price: "1 500 €",
+                sections: [
+                    { title: "Intégration API Whisper", items: ["Créer un compte OpenAI et générer une clé API", "Stocker la clé API de manière sécurisée", "Créer le module whisperClient.ts", "Implémenter la fonction transcribeAudio()", "Gérer les limites de taille de fichier (max 25MB)"] },
+                    { title: "File d'attente de transcription", items: ["Créer la table \"transcription_queue\"", "Créer l'endpoint API /api/transcription/queue", "Créer le job Cron /api/cron/transcribe (toutes les 5 min)", "Implémenter la logique de priorité", "Traiter 5 transcriptions max par exécution", "Implémenter le retry automatique (backoff exponentiel)", "Logger les erreurs de transcription"] },
+                    { title: "Déclenchement & stockage", items: ["Créer le webhook /api/webhooks/video-ready", "Déclencher l'ajout à la file après matching vidéo", "Vérifier si transcription existe déjà", "Écrire la migration pour la table \"transcriptions\"", "Créer la relation clé étrangère vers \"creatives\"", "Créer l'index full-text sur la colonne full_text", "Parser la réponse Whisper", "Extraire les segments avec timestamps", "Créer l'enregistrement dans la table", "Mettre à jour le statut dans la file d'attente"] },
+                    { title: "Affichage & export", items: ["Créer l'endpoint API /api/transcription/:creativeId", "Retourner le texte complet et les segments", "Créer le panneau d'affichage de la transcription", "Afficher le texte formaté en paragraphes", "Afficher les timestamps en marge", "Créer le bouton \"Copier la transcription\"", "Créer le bouton \"Télécharger .txt\"", "Afficher notification de confirmation"] }
+                ]
+            },
+            14: {
+                title: "Système de badges — Gamification équipe",
+                features: 28,
+                price: "1 100 €",
+                sections: [
+                    { title: "Structure de données", items: ["Écrire la migration pour la table \"badges\"", "Écrire la migration pour la table \"user_badges\"", "Créer les clés étrangères vers \"users\"", "Créer les 8 enregistrements de badges avec leurs critères"] },
+                    { title: "Définition des 8 badges", items: ["Badge 1 : écrire la requête SQL pour les critères", "Badge 2 : écrire la requête SQL pour les critères", "Badge 3 : écrire la requête SQL pour les critères", "Badge 4 : écrire la requête SQL pour les critères", "Badge 5 : écrire la requête SQL pour les critères", "Badge 6 : écrire la requête SQL pour les critères", "Badge 7 : écrire la requête SQL pour les critères", "Badge 8 : écrire la requête SQL pour les critères"] },
+                    { title: "Job d'attribution automatique", items: ["Créer le job Cron /api/cron/badges (quotidien à 00:00)", "Implémenter la boucle sur tous les membres", "Exécuter chaque requête de critère", "Vérifier si l'utilisateur n'a pas déjà le badge ce mois", "Insérer dans \"user_badges\" si critère atteint", "Déclencher la notification en cas de nouveau badge", "Logger les attributions pour audit"] },
+                    { title: "Gestion & notifications", items: ["Créer l'endpoint API /api/badges (GET liste)", "Créer l'endpoint API /api/badges/:id (PUT modification)", "Créer l'endpoint API /api/badges/:id/toggle", "Créer l'endpoint API /api/badges/:id/preview", "Créer l'endpoint API /api/users/:id/badges", "Créer le type de notification \"badge_earned\"", "Insérer la notification dans la table", "Créer le template email de félicitations", "Envoyer l'email au destinataire"] }
+                ]
+            },
+            15: {
+                title: "Système de récompenses — Gamification créateurs",
+                features: 39,
+                price: "500 €",
+                sections: [
+                    { title: "Structure de données", items: ["Écrire la migration pour la table \"rewards\"", "Écrire la migration pour la table \"reward_progress\"", "Écrire la migration pour la table \"reward_history\"", "Créer les clés étrangères vers \"creators\"", "Créer les 3 enregistrements de récompenses"] },
+                    { title: "Configuration admin", items: ["Créer l'endpoint API /api/rewards (GET liste)", "Créer l'endpoint API /api/rewards/:id (PUT modification)", "Valider que criteria_value est un nombre positif", "Valider que le niveau est unique", "Créer la page de configuration des récompenses", "Créer la carte de configuration pour chaque récompense", "Créer le formulaire d'édition avec tous les champs"] },
+                    { title: "Calcul de progression", items: ["Créer le job Cron /api/cron/rewards (quotidien à 01:00)", "Implémenter la boucle sur tous les créateurs actifs", "Calculer le current_value selon le criteria_type", "Calculer le percentage", "Mettre à jour la table \"reward_progress\"", "Détecter si percentage >= 100", "Insérer dans \"reward_history\"", "Déclencher la notification si palier atteint"] },
+                    { title: "Affichage & célébration", items: ["Créer l'endpoint API /api/portal/my-rewards", "Retourner les 3 récompenses avec leur progression", "Calculer la date estimée d'atteinte", "Créer l'endpoint API /api/creators/:id/rewards-history", "Créer la carte de progression pour chaque récompense", "Afficher la barre de progression animée", "Afficher le pourcentage de complétion", "Créer le type de notification \"reward_achieved\"", "Créer le template email de félicitations", "Créer l'écran de célébration avec animation confettis", "Afficher la popup de félicitations", "Créer la page historique des récompenses", "Afficher la liste des récompenses obtenues"] }
+                ]
+            },
+            16: {
+                title: "Centre de notifications",
+                features: 34,
+                price: "600 €",
+                sections: [
+                    { title: "Structure de données", items: ["Écrire la migration pour la table \"notifications\"", "Écrire la migration pour la table \"notification_preferences\"", "Créer les clés étrangères vers \"users\"", "Créer l'index sur (user_id, is_read)", "Créer l'ENUM pour les types de notification"] },
+                    { title: "7 types de notifications", items: ["Type \"badge_earned\" : badge gagné par un membre", "Type \"reward_achieved\" : palier de récompense atteint", "Type \"new_winner\" : nouvelle créative dépasse le seuil", "Type \"new_unicorn\" : nouvelle créative dépasse le seuil", "Type \"sync_failed\" : échec de synchronisation", "Type \"user_invited\" : nouvel utilisateur invité", "Type \"user_activated\" : utilisateur a activé son compte"] },
+                    { title: "Création & récupération", items: ["Créer le service NotificationService.create()", "Insérer dans la table \"notifications\"", "Vérifier les préférences de l'utilisateur", "Déclencher l'envoi email si activé", "Déclencher le push in-app si activé", "Créer l'endpoint API /api/notifications (GET liste)", "Filtrer par user connecté", "Trier par date décroissante", "Retourner le count de non-lues", "Créer l'endpoint API /api/notifications/unread-count"] },
+                    { title: "Actions & interface", items: ["Créer l'endpoint API /api/notifications/:id/read", "Créer l'endpoint API /api/notifications/read-all", "Créer l'endpoint API /api/notifications/:id (DELETE)", "Créer l'icône cloche dans la barre de navigation", "Afficher le badge avec le nombre de non-lues", "Créer le menu déroulant des notifications", "Afficher la liste des 10 dernières", "Créer l'affichage d'une notification", "Appliquer le code couleur par type", "Permettre de cliquer pour marquer comme lu", "Créer le bouton \"Tout marquer comme lu\"", "Créer le lien \"Voir toutes les notifications\""] }
+                ]
+            },
+            17: {
+                title: "Mise en production & accompagnement",
+                features: 90,
+                price: "2 300 €",
+                sections: [
+                    { title: "Configuration Vercel", items: ["Créer le projet Vercel et lier au repository Git", "Configurer les variables d'environnement production", "Configurer le domaine personnalisé", "Vérifier la configuration DNS", "Activer le certificat SSL automatique (HTTPS)", "Configurer le CDN Vercel Edge", "Configurer les headers de cache", "Configurer les redirections"] },
+                    { title: "Configuration Supabase Production", items: ["Créer un nouveau projet Supabase (production)", "Exécuter toutes les migrations SQL", "Vérifier la création de toutes les tables", "Appliquer toutes les politiques RLS", "Tester les politiques RLS avec différents rôles", "Activer les backups automatiques quotidiens", "Configurer la rétention des backups (30 jours)", "Configurer les alertes email en cas d'erreur", "Stocker les credentials de production de manière sécurisée"] },
+                    { title: "Services externes", items: ["Créer le compte de service Google Cloud production", "Configurer les credentials Google Sheets production", "Configurer le token Frame.io production", "Configurer la clé API OpenAI/Whisper production", "Configurer le service email production", "Tester chaque intégration en production"] },
+                    { title: "Tests fonctionnels — Pages", items: ["Tester la page de connexion", "Tester la page Overview avec vraies données", "Tester la page Creative Analysis avec tous les filtres", "Tester la page ROCS & Efficiency", "Tester la page Planning (UGC, Bunkers, CAN)", "Tester la page Team Scorecard", "Tester la page CAN Portal avec un compte créateur", "Tester la page Creator Performance", "Tester la page Détail Créative", "Tester la page Gestion Utilisateurs"] },
+                    { title: "Tests fonctionnels — Rôles & navigateurs", items: ["Tester le parcours complet Admin", "Tester le parcours complet Scriptwriter", "Tester le parcours complet Monteur", "Tester le parcours complet Créateur (lien magique)", "Tester le parcours complet Client (filtrage marque)", "Vérifier que chaque rôle ne voit que ses pages", "Vérifier les restrictions RLS", "Tester sur Chrome (dernière version)", "Tester sur Firefox (dernière version)", "Tester sur Safari (dernière version)", "Tester sur Edge (dernière version)"] },
+                    { title: "Tests mobile & optimisations", items: ["Tester sur iPhone (Safari iOS)", "Tester sur Android (Chrome)", "Vérifier le responsive sur tablette", "Vérifier la navigation tactile", "Vérifier la lisibilité des tableaux sur petit écran", "Corriger tous les bugs identifiés", "Optimiser les requêtes SQL lentes", "Optimiser le bundle size", "Vérifier les scores Lighthouse", "Corriger les problèmes d'accessibilité", "Vérifier les failles de sécurité (OWASP)", "Ajouter les rate limits sur les endpoints sensibles"] },
+                    { title: "Documentation utilisateur", items: ["Rédiger le guide utilisateur complet (PDF 20-30 pages)", "Rédiger la section \"Guide Admin\"", "Rédiger la section \"Guide Scriptwriter\"", "Rédiger la section \"Guide Monteur\"", "Rédiger la section \"Guide Créateur\"", "Rédiger la section \"Guide Client\"", "Rédiger la FAQ (10-15 questions)", "Inclure des captures d'écran pour chaque section", "Créer la table des matières avec liens"] },
+                    { title: "Documentation technique & formation", items: ["Documenter l'architecture technique (schéma)", "Documenter les endpoints API", "Documenter le schéma de base de données", "Documenter les procédures de backup/restore", "Documenter les procédures de maintenance", "Préparer le support de présentation (slides)", "Organiser la session de formation", "Faire la démo de toutes les fonctionnalités", "Répondre aux questions des utilisateurs", "Enregistrer la session (vidéo)", "Partager l'enregistrement avec le client"] },
+                    { title: "Comptes & support post-lancement", items: ["Créer les comptes Admin pour l'équipe REACH", "Créer les comptes Scriptwriter", "Créer les comptes Monteur", "Créer les comptes Client pour les marques", "Générer les liens magiques pour les créateurs", "Envoyer les invitations par email", "Fournir 2 semaines de support incluses", "Mettre en place un canal de communication", "Corriger les bugs critiques sous 24h", "Corriger les bugs mineurs sous 48h", "Documenter les demandes de modification (hors périmètre)", "Rédiger le rapport de fin de projet"] }
+                ]
+            }
+        };
+
+        let currentModule = 1;
+
+        // Toggle accordion section
+        function toggleSection(element) {
+            // Don't close if clicking on an already open section
+            const wasOpen = element.classList.contains('open');
+            
+            // Close all sections
+            document.querySelectorAll('.module-section').forEach(s => s.classList.remove('open'));
+            
+            // Open clicked section if it wasn't already open
+            if (!wasOpen) {
+                element.classList.add('open');
+            }
+        }
+
+        // Open modal
+        function openModal(moduleId) {
+            currentModule = moduleId;
+            const module = modulesData[moduleId];
+            
+            document.getElementById('modalNumber').textContent = String(moduleId).padStart(2, '0');
+            document.getElementById('modalTitle').textContent = module.title;
+            document.getElementById('modalFeatures').textContent = module.features;
+            document.getElementById('modalPrice').textContent = module.price;
+            
+            const content = document.getElementById('modalContent');
+            content.innerHTML = module.sections.map((section, index) => {
+                const rows = Math.ceil(section.items.length / 2);
+                return `
+                <div class="module-section${index === 0 ? ' open' : ''}" onclick="toggleSection(this)">
+                    <div class="module-section-header">
+                        <h4 class="module-section-title">${section.title}</h4>
+                        <div class="section-toggle">
+                            <span class="section-toggle-count">${section.items.length} tâches</span>
+                            <span class="section-toggle-icon">+</span>
+                        </div>
+                    </div>
+                    <div class="module-section-content">
+                        <div class="feature-list" style="grid-template-rows: repeat(${rows}, auto);">
+                            ${section.items.map(item => `<div class="feature-item">${item}</div>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+            
+            updateNavButtons();
+            document.getElementById('moduleModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('moduleModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Navigate between modules
+        function navigateModule(direction) {
+            const newModule = currentModule + direction;
+            if (newModule >= 1 && newModule <= 17) {
+                openModal(newModule);
+            }
+        }
+
+        // Update nav buttons
+        function updateNavButtons() {
+            document.getElementById('prevModule').disabled = currentModule === 1;
+            document.getElementById('nextModule').disabled = currentModule === 17;
+        }
+
+        // Module card click
+        document.querySelectorAll('.module-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const moduleId = parseInt(card.dataset.module);
+                openModal(moduleId);
+            });
+        });
+
+        // Close modal on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'ArrowLeft') navigateModule(-1);
+            if (e.key === 'ArrowRight') navigateModule(1);
+        });
+
+        // Close modal on overlay click
+        document.getElementById('moduleModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('moduleModal')) closeModal();
+        });
+
+        // Module filter
+        document.querySelectorAll('.module-nav-item').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.module-nav-item').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const filter = btn.dataset.filter;
+                document.querySelectorAll('.module-card').forEach(card => {
+                    if (filter === 'all' || card.dataset.category === filter) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Progress bar
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        });
+
+        // Scroll reveal
+        const reveals = document.querySelectorAll('.reveal');
+        const revealOnScroll = () => {
+            reveals.forEach((el, i) => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight - 100) {
+                    setTimeout(() => {
+                        el.classList.add('active');
+                    }, i * 50);
+                }
+            });
+        };
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll();
+    </script>
+</body>
+</html>
