@@ -156,10 +156,10 @@
         }
 
         .hero-title {
-            font-size: clamp(64px, 14vw, 180px);
+            font-size: clamp(48px, 12vw, 180px);
             font-weight: 800;
             line-height: 0.9;
-            letter-spacing: -8px;
+            letter-spacing: -2px;
             margin-bottom: 40px;
             opacity: 0;
             animation: fadeIn 0.8s ease 0.4s forwards;
@@ -292,7 +292,7 @@
         /* Modules Grid */
         .modules-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 24px;
             margin-bottom: 64px;
         }
@@ -692,6 +692,7 @@
         .timeline-section {
             background: var(--white);
             color: var(--black);
+            overflow: hidden;
         }
 
         .timeline-section .section-header {
@@ -702,56 +703,32 @@
             color: var(--gray);
         }
 
-        .timeline-grid {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            border: 1px solid var(--light-gray);
-        }
-
-        .timeline-item {
-            padding: 40px 16px;
-            text-align: center;
-            border-right: 1px solid var(--light-gray);
-            transition: all 0.3s ease;
+        .timeline-container {
             position: relative;
         }
 
-        .timeline-item:last-child {
-            border-right: none;
+        .timeline-dates {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 24px;
         }
 
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: var(--black);
-            transform: scaleY(0);
-            transform-origin: bottom;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 0;
+        .timeline-start,
+        .timeline-end {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
-        .timeline-item:hover::before {
-            transform: scaleY(1);
+        .timeline-end {
+            text-align: right;
         }
 
-        .timeline-item:hover {
-            color: var(--white);
-        }
-
-        .timeline-item:hover .timeline-label {
+        .timeline-sublabel {
+            font-size: 11px;
             color: var(--gray);
-        }
-
-        .timeline-item > * {
-            position: relative;
-            z-index: 1;
-        }
-
-        .timeline-week {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 8px;
+            font-style: italic;
         }
 
         .timeline-label {
@@ -759,7 +736,220 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             color: var(--gray);
+        }
+
+        .timeline-date {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .timeline-track {
+            position: relative;
+            height: 120px;
+            background: var(--black);
+            display: flex;
+            align-items: center;
+            padding: 0 32px;
+            margin-bottom: 24px;
+        }
+
+        .timeline-progress {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--black) 0%, #333 100%);
+            animation: progressFill 2s ease-out 0.5s forwards;
+        }
+
+        @keyframes progressFill {
+            to { width: 100%; }
+        }
+
+        .timeline-weeks-display {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            width: 100%;
+        }
+
+        .timeline-week-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: weekFadeIn 0.4s ease forwards;
+        }
+
+        .timeline-week-item:nth-child(1) { animation-delay: 0.3s; }
+        .timeline-week-item:nth-child(2) { animation-delay: 0.45s; }
+        .timeline-week-item:nth-child(3) { animation-delay: 0.6s; }
+        .timeline-week-item:nth-child(4) { animation-delay: 0.75s; }
+        .timeline-week-item:nth-child(5) { animation-delay: 0.9s; }
+        .timeline-week-item:nth-child(6) { animation-delay: 1.05s; }
+        .timeline-week-item:nth-child(7) { animation-delay: 1.2s; }
+        .timeline-week-item:nth-child(8) { animation-delay: 1.35s; }
+
+        @keyframes weekFadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .timeline-week-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--white);
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .timeline-week-dot::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+        }
+
+        .timeline-week-item:last-child .timeline-week-dot {
+            width: 16px;
+            height: 16px;
+            background: var(--white);
+            box-shadow: 0 0 20px rgba(255,255,255,0.5);
+        }
+
+        .timeline-week-num {
+            font-size: 11px;
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .timeline-phases {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 2px;
+        }
+
+        .timeline-phase {
+            padding: 16px 8px;
+            text-align: center;
+            background: var(--off-white);
+            border: 1px solid var(--light-gray);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
+        }
+
+        .timeline-phase:hover {
+            background: var(--black);
+            color: var(--white);
+            border-color: var(--black);
+        }
+
+        .timeline-phase-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray);
             transition: color 0.3s ease;
+            line-height: 1.4;
+        }
+
+        .timeline-phase:hover .timeline-phase-label {
+            color: var(--white);
+        }
+
+        .timeline-summary {
+            display: flex;
+            justify-content: center;
+            gap: 64px;
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .timeline-stat {
+            text-align: center;
+        }
+
+        .timeline-stat-value {
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            line-height: 1;
+        }
+
+        .timeline-stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--gray);
+            margin-top: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .timeline-dates {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+
+            .timeline-start,
+            .timeline-end {
+                text-align: left;
+            }
+
+            .timeline-end {
+                text-align: right;
+            }
+
+            .timeline-track {
+                height: 80px;
+                padding: 0 16px;
+            }
+
+            .timeline-week-num {
+                font-size: 9px;
+            }
+
+            .timeline-week-dot {
+                width: 8px;
+                height: 8px;
+            }
+
+            .timeline-phases {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1px;
+            }
+
+            .timeline-phase {
+                min-height: 50px;
+                padding: 12px 4px;
+            }
+
+            .timeline-phase-label {
+                font-size: 8px;
+                letter-spacing: 0;
+            }
+
+            .timeline-summary {
+                gap: 32px;
+            }
+
+            .timeline-stat-value {
+                font-size: 36px;
+            }
+
+            .timeline-date {
+                font-size: 14px;
+            }
         }
 
         /* Devis Section */
@@ -783,8 +973,8 @@
 
         .devis-row {
             display: grid;
-            grid-template-columns: 60px 1fr 100px 120px;
-            gap: 24px;
+            grid-template-columns: 50px 1fr 80px 100px;
+            gap: 16px;
             padding: 20px 0;
             border-bottom: 1px solid var(--light-gray);
             align-items: center;
@@ -807,6 +997,10 @@
             padding-bottom: 16px;
         }
 
+        .devis-row:first-child span {
+            font-size: 11px;
+        }
+
         .devis-row-num {
             font-weight: 600;
             color: var(--gray);
@@ -820,6 +1014,16 @@
             text-align: right;
             color: var(--gray);
             font-size: 13px;
+        }
+
+        .devis-row:first-child .devis-row-features {
+            font-size: 11px;
+            font-weight: 400;
+        }
+
+        .devis-row:first-child .devis-row-price {
+            font-size: 11px;
+            font-weight: 400;
         }
 
         .devis-row-price {
@@ -1020,10 +1224,7 @@
         @media (max-width: 1024px) {
             .hero-image { display: none; }
             .hero-content { max-width: 100%; }
-            .modules-grid { grid-template-columns: 1fr; }
-            .timeline-grid { grid-template-columns: repeat(4, 1fr); }
-            .timeline-item:nth-child(4) { border-right: none; }
-            .timeline-item:nth-child(n+5) { border-top: 1px solid var(--light-gray); }
+            .modules-grid { grid-template-columns: repeat(2, 1fr); }
             .module-modal-sections { grid-template-columns: 1fr; }
         }
 
@@ -1032,7 +1233,7 @@
             .nav-items { display: none; }
             section { padding: 64px 24px; }
             .hero { padding: 100px 24px 64px; }
-            .hero-title { letter-spacing: -4px; }
+            .hero-title { letter-spacing: -2px; }
             .hero-stats { flex-wrap: wrap; gap: 32px; }
             .stat-value { font-size: 36px; }
             .module-nav { padding: 12px 0; margin-bottom: 32px; }
@@ -1045,17 +1246,20 @@
             .module-modal-number { font-size: 64px; }
             .module-modal-info h2 { font-size: 24px; }
             .module-section { padding: 24px; }
-            .timeline-grid { grid-template-columns: repeat(2, 1fr); }
-            .timeline-item { padding: 24px 12px; }
-            .timeline-item:nth-child(2n) { border-right: none; }
-            .timeline-item:nth-child(n+3) { border-top: 1px solid var(--light-gray); }
-            .timeline-week { font-size: 22px; }
             .devis-row {
-                grid-template-columns: 40px 1fr 80px;
-                gap: 12px;
-                font-size: 13px;
+                grid-template-columns: 30px 1fr 70px;
+                gap: 8px;
+                font-size: 12px;
             }
             .devis-row-features { display: none; }
+            .devis-row-price { 
+                white-space: nowrap;
+                font-size: 11px;
+            }
+            .devis-row-name {
+                font-size: 11px;
+                line-height: 1.3;
+            }
             .devis-total-value { font-size: 32px; }
             .cta-button { padding: 20px 32px; }
             footer {
@@ -1067,9 +1271,10 @@
         }
 
         @media (max-width: 480px) {
-            .hero-title { font-size: 48px; letter-spacing: -3px; }
+            .hero-title { font-size: 42px; letter-spacing: -1px; }
             .section-title { font-size: 24px; }
             .module-modal-nav { flex-direction: column; }
+            .modules-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -1094,8 +1299,8 @@
     <!-- Hero -->
     <section class="hero">
         <div class="hero-content">
-            <p class="hero-label">Proposition commerciale — Janvier 2026</p>
-            <h1 class="hero-title">CREATIVE OS</h1>
+            <p class="hero-label">Proposition commerciale — 2026</p>
+            <h1 class="hero-title">CREATIVE<br>OS</h1>
             <p class="hero-description">
                 Plateforme de gestion des créatives publicitaires.<br>
                 Analyse de performance, planification et gestion d'équipe créative en temps réel.
@@ -1110,7 +1315,7 @@
                     <span class="stat-label">Modules</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-value">8</span>
+                    <span class="stat-value">6</span>
                     <span class="stat-label">Semaines</span>
                 </div>
             </div>
@@ -1127,9 +1332,9 @@
         <!-- Module Navigation -->
         <div class="module-nav">
             <button class="module-nav-item active" data-filter="all">Tous</button>
-            <button class="module-nav-item" data-filter="core">Core</button>
+            <button class="module-nav-item" data-filter="core">Infrastructure</button>
             <button class="module-nav-item" data-filter="pages">Pages</button>
-            <button class="module-nav-item" data-filter="features">Features</button>
+            <button class="module-nav-item" data-filter="features">Fonctionnalités</button>
             <button class="module-nav-item" data-filter="deploy">Déploiement</button>
         </div>
 
@@ -1406,38 +1611,80 @@
             <h2 class="section-title">Planning de réalisation</h2>
         </div>
 
-        <div class="timeline-grid">
-            <div class="timeline-item">
-                <p class="timeline-week">S1</p>
-                <p class="timeline-label">Setup</p>
+        <div class="timeline-container">
+            <div class="timeline-dates">
+                <div class="timeline-start">
+                    <span class="timeline-label">Démarrage</span>
+                    <span class="timeline-date">5 Janvier 2026</span>
+                </div>
+                <div class="timeline-end">
+                    <span class="timeline-label">Livraison estimée</span>
+                    <span class="timeline-date">14 Février 2026</span>
+                </div>
             </div>
-            <div class="timeline-item">
-                <p class="timeline-week">S2</p>
-                <p class="timeline-label">Auth</p>
+
+            <div class="timeline-track">
+                <div class="timeline-progress"></div>
+                <div class="timeline-weeks-display">
+                    <div class="timeline-week-item">
+                        <span class="timeline-week-num">S1</span>
+                        <div class="timeline-week-dot"></div>
+                    </div>
+                    <div class="timeline-week-item">
+                        <span class="timeline-week-num">S2</span>
+                        <div class="timeline-week-dot"></div>
+                    </div>
+                    <div class="timeline-week-item">
+                        <span class="timeline-week-num">S3</span>
+                        <div class="timeline-week-dot"></div>
+                    </div>
+                    <div class="timeline-week-item">
+                        <span class="timeline-week-num">S4</span>
+                        <div class="timeline-week-dot"></div>
+                    </div>
+                    <div class="timeline-week-item">
+                        <span class="timeline-week-num">S5</span>
+                        <div class="timeline-week-dot"></div>
+                    </div>
+                    <div class="timeline-week-item">
+                        <span class="timeline-week-num">S6</span>
+                        <div class="timeline-week-dot"></div>
+                    </div>
+                    <div class="timeline-week-item">
+                        <span class="timeline-week-num">S7</span>
+                        <div class="timeline-week-dot"></div>
+                    </div>
+                    <div class="timeline-week-item">
+                        <span class="timeline-week-num">S8</span>
+                        <div class="timeline-week-dot"></div>
+                    </div>
+                </div>
             </div>
-            <div class="timeline-item">
-                <p class="timeline-week">S3</p>
-                <p class="timeline-label">Sync</p>
+
+            <div class="timeline-phases">
+                <div class="timeline-phase"><span class="timeline-phase-label">Configuration</span></div>
+                <div class="timeline-phase"><span class="timeline-phase-label">Authentification</span></div>
+                <div class="timeline-phase"><span class="timeline-phase-label">Synchronisation</span></div>
+                <div class="timeline-phase"><span class="timeline-phase-label">Revue client</span></div>
+                <div class="timeline-phase"><span class="timeline-phase-label">Pages & UI</span></div>
+                <div class="timeline-phase"><span class="timeline-phase-label">Revue client</span></div>
+                <div class="timeline-phase"><span class="timeline-phase-label">Tests & QA</span></div>
+                <div class="timeline-phase"><span class="timeline-phase-label">Lancement</span></div>
             </div>
-            <div class="timeline-item">
-                <p class="timeline-week">S4</p>
-                <p class="timeline-label">Review</p>
-            </div>
-            <div class="timeline-item">
-                <p class="timeline-week">S5</p>
-                <p class="timeline-label">Pages</p>
-            </div>
-            <div class="timeline-item">
-                <p class="timeline-week">S6</p>
-                <p class="timeline-label">Review</p>
-            </div>
-            <div class="timeline-item">
-                <p class="timeline-week">S7</p>
-                <p class="timeline-label">Tests</p>
-            </div>
-            <div class="timeline-item">
-                <p class="timeline-week">S8</p>
-                <p class="timeline-label">Launch</p>
+
+            <div class="timeline-summary">
+                <div class="timeline-stat">
+                    <div class="timeline-stat-value">6</div>
+                    <div class="timeline-stat-label">Semaines</div>
+                </div>
+                <div class="timeline-stat">
+                    <div class="timeline-stat-value">17</div>
+                    <div class="timeline-stat-label">Modules</div>
+                </div>
+                <div class="timeline-stat">
+                    <div class="timeline-stat-value">581</div>
+                    <div class="timeline-stat-label">Fonctionnalités</div>
+                </div>
             </div>
         </div>
     </section>
@@ -1450,11 +1697,11 @@
         </div>
 
         <div class="devis-table">
-            <div class="devis-row">
+            <div class="devis-row devis-header">
                 <span>N°</span>
                 <span>Module</span>
-                <span>Fonc.</span>
-                <span>Montant</span>
+                <span class="devis-row-features">Fonc.</span>
+                <span class="devis-row-price">Montant</span>
             </div>
             <div class="devis-row"><span class="devis-row-num">01</span><span class="devis-row-name">Connexion sécurisée & gestion des utilisateurs</span><span class="devis-row-features">45</span><span class="devis-row-price">3 280 €</span></div>
             <div class="devis-row"><span class="devis-row-num">02</span><span class="devis-row-name">Import automatique des données Google Sheets</span><span class="devis-row-features">52</span><span class="devis-row-price">2 800 €</span></div>
@@ -1476,7 +1723,7 @@
         </div>
 
         <div class="devis-subtotal">
-            <span class="devis-subtotal-label">Sous-total développement (581 fonctionnalités)</span>
+            <span class="devis-subtotal-label">Sous-total développement</span>
             <span class="devis-subtotal-value">23 780 €</span>
         </div>
 
@@ -1502,7 +1749,7 @@
 
         <p class="devis-note">
             Infrastructure mensuelle estimée : 100-150 €/mois (Supabase Pro, Vercel Pro, Whisper API, domaine)<br>
-            Durée estimée : 8 semaines • Validité du devis : 7 jours
+            Démarrage : 5 janvier 2026 • Livraison estimée : 14 février 2026 • Validité du devis : 7 jours
         </p>
     </section>
 
@@ -1524,7 +1771,7 @@
     <!-- Footer -->
     <footer>
         <span>TURING Labs — Agence de développement sur-mesure</span>
-        <span>01.01.2026</span>
+        <span>05.01.2026</span>
     </footer>
 
     <script>
